@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" />
+  <meta name="theme-color" content="#d9d4c8" />
+  <meta name="description" content="Ψηφιακό μενού — ΦίΛιΠs γαστροθίορι, Est. 2023. Every Drink Shines." />
+  <title>ΦίΛιΠs — Μενού</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+  /* ============================================================
+     ΦίΛιΠs — Design System (single-file έκδοση)
+     ============================================================ */
+  :root {
+    --concrete: #d9d4c8;
+    --cream: #f1ece1;
+    --paper: #f7f3ea;
+    --ink: #211e19;
+    --ink-soft: #6d685c;
+    --terra: #c0552f;
+    --terra-dk: #a3431f;
+    --sage: #7d8e78;
+    --mustard: #cf972b;
+    --line: rgba(33, 30, 25, 0.20);
+    --line-soft: rgba(33, 30, 25, 0.10);
+    --shadow: 0 8px 24px rgba(33, 30, 25, 0.12);
+    --font-display: "Space Grotesk", system-ui, sans-serif;
+    --font-mono: "Space Mono", ui-monospace, monospace;
+    --font-script: "Caveat", cursive;
+    --font-body: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --maxw: 480px;
+    --head-h: 130px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--font-body);
+    background: var(--concrete);
+    color: var(--ink);
+    min-height: 100vh; min-height: 100dvh;
+    line-height: 1.6;
+    letter-spacing: .1px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  .app { max-width: var(--maxw); margin: 0 auto; position: relative; min-height: 100vh; min-height: 100dvh; }
+
+  .view { display: none; animation: fade .35s ease; }
+  .view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* concrete background */
+  .concrete-bg { position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(130% 90% at 12% -8%, #e6e1d4 0%, rgba(230,225,212,0) 55%),
+      radial-gradient(120% 100% at 100% 108%, #c2bba9 0%, rgba(194,187,169,0) 52%),
+      var(--concrete);
+  }
+  .concrete-bg::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: .055; mix-blend-mode: multiply;
+  }
+  @media (prefers-reduced-motion: reduce) { .view, .dr-name.is-color { animation: none !important; } }
+
+  /* checker tape — nod to the chequerboard floor */
+  .checker { height: 12px; background: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%) 0 0 / 12px 12px; opacity: .85; }
+
+  /* play / pause motif (echo of the ΦίΛιΠs mark) */
+  .pp { display: inline-flex; align-items: center; gap: 5px; }
+  .pp .bar { width: 5px; height: 17px; background: var(--terra); }
+  .pp .tri { width: 0; height: 0; border-left: 14px solid var(--sage); border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+  .pp.sm .bar { width: 3.5px; height: 12px; }
+  .pp.sm .tri { border-left-width: 10px; border-top-width: 6px; border-bottom-width: 6px; }
+
+  /* (Α) SPLASH */
+  #view-splash {
+    min-height: 100vh; min-height: 100dvh;
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px 26px; gap: 14px;
+    position: relative; overflow: hidden; isolation: isolate;
+  }
+  #view-splash.active { display: flex; }
+
+  .splash-photo { position: absolute; inset: 0; z-index: 0;
+    background: url("filips-splash-bg.png") center/cover no-repeat;
+    filter: blur(5px) saturate(1.08); transform: scale(1.12);
+  }
+  .splash-veil { position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(115% 65% at 50% 32%, rgba(241,236,225,0.30), rgba(217,212,200,0) 58%),
+      linear-gradient(180deg, rgba(224,219,206,0.50) 0%, rgba(214,209,196,0.46) 44%, rgba(33,30,25,0.52) 100%);
+  }
+  .splash-frame, .splash-kicker, .splash-tagline, .btn-enter { position: relative; z-index: 3; }
+
+  /* scattered collage stickers (cut from the venue's own collage cards) */
+  .sticker { position: absolute; z-index: 2; border: 4px solid #faf7f0; box-shadow: 0 7px 18px rgba(33,30,25,0.42); pointer-events: none; }
+  .s-eye   { width: 84px;  top: 8.5%; right: 6%;  transform: rotate(9deg); }
+  .s-never { width: 134px; top: 12%;  left: 3%;   transform: rotate(-11deg); }
+  .s-dog   { width: 112px; bottom: 13%; left: 4%;  transform: rotate(-7deg); }
+  .s-eye2  { width: 64px;  bottom: 15.5%; right: 7%; transform: rotate(-15deg); }
+
+  .splash-frame { position: relative; padding: 18px; width: 80%; max-width: 300px; }
+  .splash-frame::before, .splash-frame::after { content: ""; position: absolute; width: 36px; height: 36px; border: 1.5px solid var(--ink); }
+  .splash-frame::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .splash-frame::after { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .logo-plaque { background: #fbf8f2; padding: 12px; width: 100%; border: 1px solid rgba(33,30,25,0.12); box-shadow: 0 18px 44px rgba(33,30,25,0.30); animation: plaqueIn .7s cubic-bezier(.2,.7,.2,1) both; }
+  .logo-plaque img { display: block; width: 100%; }
+  @keyframes plaqueIn { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+
+  .splash-kicker { margin-top: 8px; font-family: var(--font-mono); font-size: .68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--ink); }
+  .splash-tagline { margin-top: 0; font-family: var(--font-script); font-size: 1.5rem; line-height: 1.2; color: var(--terra); white-space: nowrap; }
+
+  .btn-enter {
+    margin-top: 6px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
+    font-family: var(--font-mono); font-weight: 700; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--cream); background: var(--terra); border: 1.5px solid var(--ink);
+    padding: 13px 26px; border-radius: 3px; box-shadow: var(--shadow);
+    transition: transform .12s ease, background .2s ease;
+  }
+  .btn-enter:active { transform: scale(0.96); }
+  .btn-enter .tri { width: 0; height: 0; border-left: 9px solid currentColor; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+
+  /* (Β) ΜΕΝΟΥ */
+  #view-menu { min-height: 100vh; min-height: 100dvh; position: relative; isolation: isolate; }
+
+  /* — Sticky header (topbar + κατηγορίες) — */
+  .menu-header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(241, 236, 225, 0.93);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1.5px solid var(--ink);
+  }
+
+  .topbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px 8px; }
+  .topbar-brand { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; letter-spacing: 1px; color: var(--ink); }
+  .topbar-brand .accent { color: var(--terra); }
+
+  .lang-toggle { margin-left: auto; display: inline-flex; border: 1.5px solid var(--ink); border-radius: 3px; overflow: hidden; background: var(--cream); }
+  .lang-toggle button { border: none; background: transparent; color: var(--ink-soft); font-family: var(--font-mono); font-weight: 700; font-size: .72rem; letter-spacing: 1px; padding: 8px 12px; cursor: pointer; min-height: 36px; transition: background .2s, color .2s; }
+  .lang-toggle button.on { background: var(--ink); color: var(--cream); }
+
+  /* — Μπάρα κατηγοριών (efood-style) — */
+  .catbar {
+    position: relative; display: flex; gap: 7px; overflow-x: auto;
+    padding: 6px 14px 11px; scroll-behavior: smooth;
+    scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;
+  }
+  .catbar::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto; border: 1.5px solid var(--ink); background: transparent;
+    color: var(--ink); font-family: var(--font-mono); font-weight: 700;
+    font-size: .72rem; letter-spacing: 1px; text-transform: uppercase;
+    padding: 8px 14px; border-radius: 3px; cursor: pointer; white-space: nowrap;
+    min-height: 38px; transition: background .18s ease, color .18s ease, transform .12s ease;
+  }
+  .chip:active { transform: scale(0.95); }
+  .chip.on { background: var(--terra); color: var(--cream); border-color: var(--terra); }
+
+  /* — Σώμα μενού (όλες οι κατηγορίες σε ένα scroll) — */
+  .menu-body { padding-bottom: 8px; }
+  .menu-section { padding: 2px 16px 16px; scroll-margin-top: var(--head-h); }
+  .sec-head { padding: 26px 0 8px; border-bottom: 1.5px solid var(--ink); margin-bottom: 6px; }
+  .sec-kicker { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: .66rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--terra); margin-bottom: 5px; }
+  .sec-kicker .tri { width: 0; height: 0; border-left: 8px solid var(--sage); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .sec-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1.0; color: var(--ink); text-transform: uppercase; letter-spacing: .5px; }
+  .sec-head .sub { font-family: var(--font-script); font-size: 1.45rem; color: var(--terra); margin-top: 2px; }
+
+  .subgroup-title { font-family: var(--font-mono); font-weight: 700; font-size: .76rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); margin: 20px 0 4px; display: flex; align-items: center; gap: 9px; }
+  .subgroup-title::before { content: ""; width: 8px; height: 8px; background: var(--mustard); transform: rotate(45deg); }
+
+  /* Signature drinks — floating layout */
+  .drink { position: relative; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
+  .drink:last-child { border-bottom: none; }
+  .dr-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+  .dr-name { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; letter-spacing: 1px; text-transform: uppercase; color: var(--ink); }
+  .dr-name.is-color { color: var(--c, var(--ink)); animation: nameGlow 2.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  @keyframes nameGlow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 13px var(--c, transparent); } }
+  .dr-nick { font-family: var(--font-script); font-weight: 700; font-size: 1.2rem; line-height: 1.2; color: var(--terra); }
+  .dr-price { margin-left: auto; font-family: var(--font-mono); font-weight: 700; font-size: 1rem; color: var(--ink); white-space: nowrap; }
+  .dr-desc { font-size: .84rem; color: var(--ink-soft); margin-top: 7px; max-width: 95%; line-height: 1.55; }
+
+  /* List rows — dotted leaders */
+  .row { padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
+  .row:last-child { border-bottom: none; }
+  .r-top { display: flex; align-items: baseline; gap: 8px; }
+  .r-nm { font-weight: 600; font-size: 1rem; color: var(--ink); letter-spacing: .2px; }
+  .r-lead { flex: 1; border-bottom: 1.5px dotted var(--line); transform: translateY(-4px); min-width: 16px; }
+  .r-pr { font-family: var(--font-mono); font-weight: 700; font-size: .95rem; color: var(--ink); white-space: nowrap; }
+  .r-ds { font-size: .8rem; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
+  .eur { font-size: .82em; color: var(--terra); }
+
+  .footer { text-align: center; padding: 28px 16px 46px; font-size: .74rem; color: var(--ink-soft); }
+  .footer .checker { max-width: 108px; margin: 0 auto 18px; }
+  .footer .slogan { font-family: var(--font-script); font-size: 1.4rem; color: var(--terra); margin-bottom: 8px; }
+  .footer .footer-powered { font-family: var(--font-mono); font-size: .66rem; letter-spacing: 1px; }
+  .footer .mark { display: inline-block; margin-top: 10px; font-family: var(--font-mono); font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; opacity: .7; }
+
+  .zine-tag { position: fixed; font-family: var(--font-mono); font-weight: 700; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); opacity: .3; pointer-events: none; z-index: -1; }
+  .zine-tag.t1 { top: 150px; right: 8px; transform: rotate(8deg); }
+  .zine-tag.t2 { bottom: 80px; left: 6px; transform: rotate(-8deg); }
+
+  button { min-height: 44px; }
+  @media (max-width: 340px) { .catbar { gap: 6px; } .chip { padding: 8px 12px; } }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#15120e"/>
+      <rect x="30" y="30" width="40" height="40" rx="9" fill="#d98a5f"/>
+      <text x="50" y="50" fill="#fbf8f2" font-family="Georgia, serif" font-weight="700" font-size="26" text-anchor="middle" dominant-baseline="central">Φ</text>
+    </svg>
+  </template>
+  <div class="concrete-bg" aria-hidden="true"></div>
+  <div class="zine-tag t1" aria-hidden="true">creativity takes courage ™</div>
+  <div class="zine-tag t2" aria-hidden="true">NEVER STOP</div>
+
+  <div class="app">
+    <!-- SPLASH -->
+    <section id="view-splash" class="view active">
+      <div class="splash-photo" aria-hidden="true"></div>
+      <div class="splash-veil" aria-hidden="true"></div>
+      <img class="sticker s-never" src="sticker-neverstop.png" alt="" aria-hidden="true" />
+      <img class="sticker s-eye" src="sticker-eye.png" alt="" aria-hidden="true" />
+      <img class="sticker s-dog" src="sticker-dog.png" alt="" aria-hidden="true" />
+      <img class="sticker s-eye2" src="sticker-eye.png" alt="" aria-hidden="true" />
+      <div class="splash-frame">
+        <div class="logo-plaque">
+          <img src="filips-logo-clean.png" alt="ΦίΛιΠs — Est. 2023" />
+        </div>
+      </div>
+      <div class="splash-kicker">Cocktail Bar · Est. 2023</div>
+      <div class="splash-tagline">Every Drink Shines ✦</div>
+      <button id="btn-enter" class="btn-enter"><span class="tri"></span>Δες το μενού</button>
+    </section>
+
+    <!-- ΜΕΝΟΥ (efood-style: μπάρα + συνεχές scroll) -->
+    <section id="view-menu" class="view">
+      <div class="menu-header" id="menu-header">
+        <div class="topbar">
+          <span class="topbar-brand">Φί<span class="accent">Λ</span>ιΠs</span>
+          <span class="pp sm" aria-hidden="true"><span class="bar"></span><span class="bar"></span><span class="tri"></span></span>
+          <div class="lang-toggle" role="group" aria-label="Γλώσσα">
+            <button data-lang="gr">GR</button>
+            <button data-lang="en">EN</button>
+          </div>
+        </div>
+        <nav class="catbar" id="catbar" aria-label="Κατηγορίες"></nav>
+        <div class="checker" aria-hidden="true"></div>
+      </div>
+      <div id="menu-body" class="menu-body"></div>
+      <div class="footer">
+        <div class="checker" aria-hidden="true"></div>
+        <div class="slogan footer-slogan">Every Drink Shines</div>
+        <div class="footer-powered">Powered by Φίλιπς © 2023</div>
+        <div class="mark">creativity takes courage ™</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  // ============================================================
+  //  ΔΕΔΟΜΕΝΑ ΜΕΝΟΥ — δίγλωσσα (GR + EN)
+  //  • Πρωτεύον πεδίο = Ελληνικά (name, desc, label, group, nickname)
+  //  • Πεδίο "...En" = Αγγλικά (nameEn, descEn, labelEn, groupEn, nicknameEn)
+  //  • Κατηγορίες: title = EN, titleGr = GR · subtitle = EN, subtitleGr = GR
+  // ============================================================
+  const MENU = {
+    brand: {
+      name: "ΦίΛιΠs", tagline: "γαστροθίορι", est: "Est. 2023",
+      slogans: ["Every Drink Shines", "Spirits, Stories, Sensations", "Keep the lights on"]
+    },
+    categories: [
+      {
+        id: "coffee", title: "Coffee", titleGr: "Καφέδες",
+        subtitle: "Keep the lights on", subtitleGr: "Κράτα τα φώτα αναμμένα", style: "list",
+        items: [
+          { name: "Ελληνικός μονός", nameEn: "Greek coffee (single)", price: "2.0" },
+          { name: "Ελληνικός διπλός", nameEn: "Greek coffee (double)", price: "2.5" },
+          { name: "Espresso", nameEn: "Espresso", price: "2.0" },
+          { name: "Espresso διπλός", nameEn: "Espresso double", price: "2.5" },
+          { name: "Espresso macchiato", nameEn: "Espresso macchiato", price: "2.2" },
+          { name: "Freddo espresso", nameEn: "Freddo espresso", price: "3.0" },
+          { name: "Cappuccino", nameEn: "Cappuccino", price: "3.0" },
+          { name: "Freddo cappuccino", nameEn: "Freddo cappuccino", price: "3.5" },
+          { name: "Latte", nameEn: "Latte", price: "3.2" },
+          { name: "Freddo latte", nameEn: "Freddo latte", price: "3.5" },
+          { name: "Flat white", nameEn: "Flat white", price: "3.3" },
+          { name: "Cortado", nameEn: "Cortado", price: "2.8" },
+          { name: "Americano", nameEn: "Americano", price: "2.8" },
+          { name: "Καφές φίλτρου", nameEn: "Filter coffee", price: "3.0" },
+          { name: "Φραπέ", nameEn: "Frappé", price: "2.5" },
+          { name: "Mocha", nameEn: "Mocha", price: "3.5" },
+          { name: "Ζεστή σοκολάτα", nameEn: "Hot chocolate", price: "3.5" },
+          { name: "Τσάι / αφέψημα", nameEn: "Tea / infusion", price: "2.8" }
+        ]
+      },
+      {
+        id: "cocktails", title: "Rainbow", titleGr: "Rainbow", forceEnNames: true,
+        subtitle: "Every Drink Shines.", subtitleGr: "Κάθε ποτό λάμπει.", style: "signature",
+        items: [
+          { label: "ΚΟΚΚΙΝΟ", labelEn: "RED", hex: "#d6493b", nickname: "Η Φλογερή", nicknameEn: "The Fiery One",
+            desc: "Bourbon, καρύδα, γλυκό βερμούτ, κόκκινα φρούτα, οξύτητες", descEn: "Bourbon, coconut, sweet vermouth, red berries, acids", price: "9.0" },
+          { label: "ΠΟΡΤΟΚΑΛΙ", labelEn: "ORANGE", hex: "#e07a2e", nickname: "Λάμψη Εσπεριδοειδών", nicknameEn: "Citrus Glow",
+            desc: "Tequila Olmeca blanco, καρύδα, καρότο, τζίντζερ, οξύτητες & αλάτι σέλινου", descEn: "Olmeca blanco tequila, coco, carrot, ginger, acids & celery salt", price: "9.0" },
+          { label: "ΚΙΤΡΙΝΟ", labelEn: "YELLOW", hex: "#e0a81f", nickname: "Ηλιόλουστη Γουλιά", nicknameEn: "Sunburst Sip",
+            desc: "Cocchi americano χαμομήλι, λάβδανο, CO2, τσιπ παρμεζάνας", descEn: "Chamomile cocchi americano, labdanum, CO2, parmesan chip", price: "9.0" },
+          { label: "ΠΡΑΣΙΝΟ", labelEn: "GREEN", hex: "#5b9e57", nickname: "Κήπος Φρεσκάδας", nicknameEn: "Garden Zest",
+            desc: "Vodka Absolut φιστίκι, κακάο, αλατισμένη καραμέλα & οξύτητες", descEn: "Pistachio Absolut vodka, cacao, salted caramel & acids", price: "8.0" },
+          { label: "ΜΠΛΕ", labelEn: "BLUE", hex: "#3b7bd6", nickname: "Ωκεάνια Δροσιά", nicknameEn: "Ocean Chill",
+            desc: "Vodka Absolut, blue curaçao, βερίκοκο, τζίντζερ, οξύτητες & αφρός berries", descEn: "Absolut vodka, blue curaçao, apricots, ginger, acids & berries foam", price: "9.0" },
+          { label: "ΛΟΥΛΑΚΙ", labelEn: "INDIGO", hex: "#6a5bd6", nickname: "Άνθος του Μεσονυχτίου", nicknameEn: "Midnight Bloom",
+            desc: "Gin Beefeater butterfly pea, αγγούρι, τζίντζερ & CO2 σαμπούκου", descEn: "Butterfly pea Beefeater gin, cucumber, ginger & elderflower CO2", price: "9.0" },
+          { label: "ΓΑΛΑΖΙΟ", labelEn: "AZURE", hex: "#27aebf", nickname: "Γουλιά Ορίζοντα", nicknameEn: "Skyline Sip",
+            desc: "Μείγμα ρουμιών, μπανάνα, κακάο, οξύτητες, blue curaçao & foamer", descEn: "Blend of rums, banana, cacao, acids, blue curaçao & foamer", price: "9.0" }
+        ]
+      },
+      {
+        id: "spritz", title: "Spritz", titleGr: "Spritz", forceEnNames: true,
+        subtitle: "Light & sparkling", subtitleGr: "Ελαφρύ & αφρώδες", style: "signature",
+        items: [
+          { name: "Μεταξένιος Κήπος", nameEn: "Silky Garden Spritz",
+            desc: "Vodka Absolut, μήλο, φρέσκο αγγούρι, σπιτικό σιρόπι orgeat, οξύτητες & αφρώδης οίνος", descEn: "Absolut vodka, apple, fresh cucumber, homemade orgeat syrup, acids & sparkling wine", price: "8.0" },
+          { name: "Άνθος Ροδάκινου", nameEn: "Peach Bloom",
+            desc: "Λευκό bitter λικέρ, καβουρδισμένο ροδάκινο & αφρώδης οίνος", descEn: "White bitter liqueur, toasted peach & sparkling wine", price: "8.0" },
+          { name: "Βελούδινη Λάμψη", nameEn: "Velvet Sparkle",
+            desc: "Martini bitter, ιβίσκος & σόδα παντζαριού", descEn: "Martini bitter, hibiscus & beetroot soda", price: "8.0" }
+        ]
+      },
+      {
+        id: "hot", title: "Hot Cocktails", titleGr: "Ζεστά Cocktails", forceEnNames: true,
+        subtitle: "Warm & spiced", subtitleGr: "Ζεστό & μπαχαρωμένο", style: "signature",
+        items: [
+          { name: "Ζεστό Ελιξίριο", nameEn: "Hot Elixir",
+            desc: "Metaxa 5 stars, μήλο, τζίντζερ & μπαχαρικά", descEn: "Metaxa 5 stars, apple, ginger & spices", price: "8.0" },
+          { name: "Πολικό Φιλί", nameEn: "Polar Kiss",
+            desc: "Spiced rum, ιβίσκος, maraschino, κόκκινα φρούτα & οξύτητες", descEn: "Spiced rum, hibiscus, maraschino, red berries & acids", price: "9.0" },
+          { name: "Απόλαυση Χαμομηλιού", nameEn: "Chamomile Delight",
+            desc: "Gin Beefeater, χαμομήλι, μέλι & τζίντζερ", descEn: "Beefeater gin, chamomile, honey & ginger", price: "8.0" }
+        ]
+      },
+      {
+        id: "nonalcohol", title: "Non Alcohol", titleGr: "Χωρίς Αλκοόλ",
+        subtitle: "Mocktails", subtitleGr: "Mocktails", style: "signature",
+        items: [
+          { name: "Δύναμη των Λουλουδιών", nameEn: "Flower Power",
+            desc: "Martini floreale, τριαντάφυλλο, σαμπούκος, οξύτητες & CO2", descEn: "Martini floreale, roses, elderflower, acids & CO2", price: "7.0" },
+          { name: "Berries Mule", nameEn: "Berries Mule",
+            desc: "Beefeater 0.0, κόκκινα φρούτα, καρύδα, οξύτητες & ginger beer", descEn: "Beefeater 0.0, red berries, coconut, acids & ginger beer", price: "8.0" }
+        ]
+      },
+      {
+        id: "wine", title: "Wine", titleGr: "Κρασί",
+        subtitle: "Urban pours for urban souls", subtitleGr: "Αστικές γουλιές για αστικές ψυχές", style: "list",
+        items: [
+          { name: "Meteoro", desc: "Ερυθρό — (επιβεβαίωσε ποικιλία/περιοχή)", descEn: "Red — (confirm variety/region)", price: "7.0 / 28.0" },
+          { name: "Portes Σκούρα", nameEn: "Portes Skouras", desc: "Ερυθρό — Merlot, Κτήμα Σκούρα", descEn: "Red — Merlot, Skouras Estate", price: "7.0 / 28.0" },
+          { name: "Limniona", desc: "Ερυθρό — Κτήμα Ζαφειράκη, Τύρναβος–Λάρισα", descEn: "Red — Zafeirakis Estate, Tyrnavos–Larisa", price: "7.0 / 30.0" },
+          { name: "Bostani", desc: "Ερυθρό — Αμπελώνες Αμύνταιο–Φλώρινα", descEn: "Red — Amyntaio–Florina vineyards", price: "34.0" },
+          { name: "Psani Old Vines", desc: "Ερυθρό — Βιολογικής Γεωργίας", descEn: "Red — Organic farming", price: "36.0" },
+          { name: "Moscato d'Asti", desc: "Αφρώδες", descEn: "Sparkling", price: "7.0 / 35.0" },
+          { name: "Martini Prosecco", desc: "Αφρώδες", descEn: "Sparkling", price: "7.0 / 35.0" },
+          { name: "Louis Roederer Brut Champagne", desc: "Αφρώδες — Champagne", descEn: "Sparkling — Champagne", price: "100.0" }
+        ]
+      },
+      {
+        id: "whiskey", title: "Whiskey", titleGr: "Ουίσκι",
+        subtitle: "Spirits, Stories, Sensations", subtitleGr: "Αποστάγματα, Ιστορίες, Αισθήσεις", style: "list",
+        items: [
+          { name: "Dewar's", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Famous Grouse", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Haig", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Ballantine's", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Cutty Sark", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Dewar's 8yo Illegal Smooth", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "8.0" },
+          { name: "Johnnie Walker Black Label", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "9.0" },
+          { name: "Chivas Regal 12 Years Old", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "9.0" },
+          { name: "Dimple Golden Selection", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "9.0" },
+          { name: "Cutty Sark 12 Years Old", group: "Σκωτσέζικο Ουίσκι", groupEn: "Scotch Whisky", price: "10.0" },
+          { name: "Canadian", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "8.0" },
+          { name: "Jack Daniel's", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "9.0" },
+          { name: "Jack Daniel's Single Barrel", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "10.0" },
+          { name: "Jack Daniel's Honey", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "9.0" },
+          { name: "Four Roses", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "8.0" },
+          { name: "Maker's Mark", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "9.0" },
+          { name: "Woodford Reserve", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "10.0" },
+          { name: "Bulleit Rye", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "10.0" },
+          { name: "Bulleit Bourbon", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "9.0" },
+          { name: "Buffalo Trace", group: "Αμερικάνικο Ουίσκι", groupEn: "American Whiskey", price: "10.0" },
+          { name: "Cardhu 12 Years Old", group: "Single Malt", groupEn: "Single Malt Whisky", price: "10.0" },
+          { name: "Laphroaig 10 Years Old", group: "Single Malt", groupEn: "Single Malt Whisky", price: "12.0" },
+          { name: "Glenfiddich 12 Years Old", group: "Single Malt", groupEn: "Single Malt Whisky", price: "10.0" },
+          { name: "Talisker 10 Years Old", group: "Single Malt", groupEn: "Single Malt Whisky", price: "12.0" },
+          { name: "Jameson", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "8.0" },
+          { name: "Jameson Triple Triple", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", desc: "Marsala cask edition (επιβεβαίωσε τιμή)", descEn: "Marsala cask edition (confirm price)", price: "—" },
+          { name: "Bushmills Original", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "8.0" },
+          { name: "Bushmills 10 Years Old", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "10.0" },
+          { name: "Tullamore Dew", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "8.0" },
+          { name: "Jameson Black Barrel", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "10.0" },
+          { name: "Teeling Small Batch", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "10.0" },
+          { name: "Teeling Single Grain", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "11.0" },
+          { name: "Dunville's Three Crowns", group: "Ιρλανδικό Ουίσκι", groupEn: "Irish Whiskey", price: "12.0" },
+          { name: "Nikka From The Barrel", group: "Ιαπωνικό Ουίσκι", groupEn: "Japanese Whisky", price: "14.0" }
+        ]
+      }
+    ]
+  };
+
+  // ============================================================
+  //  ΛΟΓΙΚΗ
+  // ============================================================
+  (function () {
+    "use strict";
+
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    };
+
+    const I18N = {
+      gr: { enter: "Δες το μενού", poweredBy: "Powered by Φίλιπς © 2023" },
+      en: { enter: "View Menu", poweredBy: "Powered by Φίλιπς © 2023" }
+    };
+
+    let lang = store.get("filips-lang") || "gr";
+    let activeCat = null;
+    let suppressSpy = false;   // αγνόησε το scroll-spy κατά τη διάρκεια προγραμματισμένου scroll
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // δίγλωσσο lookup: EN → πεδίο "...En" με fallback, GR → πρωτεύον πεδίο με fallback
+    const L = (obj, key) => {
+      if (!obj) return "";
+      const en = obj[key + "En"], base = obj[key];
+      return lang === "en" ? (en != null ? en : (base || "")) : (base != null ? base : (en || ""));
+    };
+    const catTitle = (cat) => (lang === "gr" ? (cat.titleGr || cat.title) : (cat.title || cat.titleGr));
+    const catSub = (cat) => cat.subtitle || "";
+
+    function fmtPrice(price) {
+      if (!price || price === "—") return esc(price || "");
+      return esc(price).split("/").map((p) => p.trim()).map((p) => `${p}<span class="eur">€</span>`).join(" / ");
+    }
+
+    function groupBy(arr, keyFn) {
+      return arr.reduce((acc, x) => { const k = keyFn(x); (acc[k] = acc[k] || []).push(x); return acc; }, {});
+    }
+
+    function drinkHTML(it, idx, cat) {
+      const enName = cat && cat.forceEnNames;
+      const displayName = enName
+        ? (it.labelEn || it.nameEn || it.label || it.name || "")
+        : (L(it, "label") || L(it, "name") || "");
+      const delay = ((idx || 0) % 7) * 0.3;
+      const colored = it.hex ? " is-color" : "";
+      const cstyle = it.hex ? ` style="--c:${it.hex};--d:${delay}s"` : "";
+      const nickTxt = it.nicknameEn || it.nickname || "";   // πάντα Αγγλικά, σταθερά
+      const nick = nickTxt ? `<span class="dr-nick">“${esc(nickTxt)}”</span>` : "";
+      const dsTxt = L(it, "desc");
+      const desc = dsTxt ? `<div class="dr-desc">${esc(dsTxt)}</div>` : "";
+      return `
+      <div class="drink">
+        <div class="dr-head">
+          <span class="dr-name${colored}"${cstyle}>${esc(displayName)}</span>${nick}
+          <span class="dr-price">${fmtPrice(it.price)}</span>
+        </div>
+        ${desc}
+      </div>`;
+    }
+
+    function rowHTML(it) {
+      const dsTxt = L(it, "desc");
+      const desc = dsTxt ? `<div class="r-ds">${esc(dsTxt)}</div>` : "";
+      return `
+      <div class="row">
+        <div class="r-top">
+          <span class="r-nm">${esc(L(it, "name"))}</span>
+          <span class="r-lead"></span>
+          <span class="r-pr">${fmtPrice(it.price)}</span>
+        </div>
+        ${desc}
+      </div>`;
+    }
+
+    function sectionHTML(cat, idx) {
+      const sig = cat.style === "signature";
+      const render = sig ? drinkHTML : rowHTML;
+      const hasGroups = cat.items.some((it) => it.group);
+      let body;
+      if (hasGroups) {
+        const groups = groupBy(cat.items, (it) => L(it, "group") || "");
+        body = Object.keys(groups).map((g) => {
+          const head = g ? `<h3 class="subgroup-title">${esc(g)}</h3>` : "";
+          return head + groups[g].map((it, i) => render(it, i, cat)).join("");
+        }).join("");
+      } else {
+        body = cat.items.map((it, i) => render(it, i, cat)).join("");
+      }
+      const sub = catSub(cat) ? `<div class="sub">${esc(catSub(cat))}</div>` : "";
+      const num = String(idx).padStart(2, "0");
+      return `
+      <section class="menu-section" id="sec-${esc(cat.id)}" data-cat="${esc(cat.id)}">
+        <div class="sec-head">
+          <div class="sec-kicker"><span class="tri"></span> Nο ${num}</div>
+          <h2>${esc(catTitle(cat))}</h2>
+          ${sub}
+        </div>
+        ${body}
+      </section>`;
+    }
+
+    function renderMenu() {
+      $("#catbar").innerHTML = MENU.categories.map((cat) =>
+        `<button class="chip" type="button" data-cat="${esc(cat.id)}">${esc(catTitle(cat))}</button>`
+      ).join("");
+      $("#menu-body").innerHTML = MENU.categories.map((cat, i) => sectionHTML(cat, i + 1)).join("");
+    }
+
+    function headOffset() {
+      const h = $("#menu-header");
+      return h ? h.offsetHeight : 118;
+    }
+
+    function setActiveChip(catId) {
+      if (catId === activeCat) return;
+      activeCat = catId;
+      const bar = $("#catbar");
+      $$(".chip").forEach((c) => {
+        const on = c.dataset.cat === catId;
+        c.classList.toggle("on", on);
+        if (on && bar) {
+          // κεντράρισε το ενεργό chip μέσα στη μπάρα (χωρίς scrollIntoView)
+          const target = c.offsetLeft - (bar.clientWidth - c.clientWidth) / 2;
+          bar.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+        }
+      });
+    }
+
+    function onScroll() {
+      if (suppressSpy) return;
+      const offset = headOffset() + 14;
+      const secs = $$(".menu-section");
+      let current = secs.length ? secs[0].dataset.cat : null;
+      for (const s of secs) {
+        if (s.getBoundingClientRect().top - offset <= 0) current = s.dataset.cat;
+        else break;
+      }
+      // αν είμαστε στο τέλος της σελίδας, ενεργοποίησε την τελευταία κατηγορία
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4 && secs.length) {
+        current = secs[secs.length - 1].dataset.cat;
+      }
+      if (current) setActiveChip(current);
+    }
+
+    function scrollToCat(catId) {
+      const sec = document.getElementById("sec-" + catId);
+      if (!sec) return;
+      setActiveChip(catId);
+      suppressSpy = true;
+      const top = sec.getBoundingClientRect().top + window.scrollY - headOffset() + 2;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      clearTimeout(scrollToCat._t);
+      scrollToCat._t = setTimeout(() => { suppressSpy = false; onScroll(); }, 650);
+    }
+
+    function showView(id) {
+      $$(".view").forEach((v) => v.classList.remove("active"));
+      const el = document.getElementById("view-" + id);
+      if (el) el.classList.add("active");
+    }
+
+    function route() {
+      const hash = location.hash.replace(/^#/, "");
+      if (hash === "menu") {
+        showView("menu");
+        renderMenu();
+        requestAnimationFrame(() => { onScroll(); });
+      } else {
+        showView("splash");
+      }
+    }
+
+    function applyLang() {
+      document.documentElement.lang = lang === "gr" ? "el" : "en";
+      $("#btn-enter").textContent = I18N[lang].enter;
+      $$(".footer-powered").forEach((f) => (f.textContent = I18N[lang].poweredBy));
+      $$(".lang-toggle button").forEach((b) => b.classList.toggle("on", b.dataset.lang === lang));
+    }
+
+    function setLang(l) {
+      if (l === lang) return;
+      const keep = activeCat;          // διατήρησε την τρέχουσα κατηγορία
+      lang = l; store.set("filips-lang", l);
+      applyLang();
+      if (document.getElementById("view-menu").classList.contains("active")) {
+        renderMenu();
+        activeCat = null;
+        if (keep) {
+          // πήγαινε στην ίδια κατηγορία (άμεσα, χωρίς animation)
+          const sec = document.getElementById("sec-" + keep);
+          if (sec) {
+            const top = sec.getBoundingClientRect().top + window.scrollY - headOffset() + 2;
+            window.scrollTo({ top: Math.max(0, top) });
+          }
+          setActiveChip(keep);
+        } else {
+          onScroll();
+        }
+      }
+    }
+
+    function bind() {
+      $("#btn-enter").addEventListener("click", () => { location.hash = "menu"; });
+      $("#catbar").addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if (chip) scrollToCat(chip.dataset.cat);
+      });
+      $$(".lang-toggle button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+      window.addEventListener("hashchange", route);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", () => {
+        document.documentElement.style.setProperty("--head-h", headOffset() + "px");
+      });
+    }
+
+    function init() {
+      if (MENU.brand) {
+        const slg = MENU.brand.slogans || [];
+        const pick = slg[Math.floor(Math.random() * slg.length)] || "Every Drink Shines";
+        $$(".footer-slogan").forEach((e) => (e.textContent = pick));
+      }
+      bind();
+      applyLang();
+      route();
+      requestAnimationFrame(() => document.documentElement.style.setProperty("--head-h", headOffset() + "px"));
+    }
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+    else init();
+  })();
+  </script>
+</body>
+</html>
