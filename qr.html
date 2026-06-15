@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ΦίΛιΠs — Δημιουργία QR Code</title>
+  <style>
+    :root { --terra: #C8794E; --sage: #8FB08A; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #faf8f5; color: #1c1c1c; margin: 0;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .box {
+      background: #fff; border: 1.5px solid #e3ddd5; border-radius: 16px;
+      padding: 28px 24px; max-width: 420px; width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08); text-align: center;
+    }
+    h1 { font-size: 1.4rem; margin: 0 0 4px; }
+    .brand .accent { color: var(--terra); }
+    p.help { color: #666; font-size: .9rem; margin: 0 0 20px; }
+    label { display: block; text-align: left; font-size: .82rem; font-weight: 600; margin-bottom: 6px; }
+    input {
+      width: 100%; padding: 12px 14px; font-size: 1rem; border: 1.5px solid #d9d9d9;
+      border-radius: 10px; margin-bottom: 14px; font-family: inherit;
+    }
+    input:focus { outline: none; border-color: var(--terra); }
+    button {
+      cursor: pointer; border: none; border-radius: 999px; padding: 12px 22px;
+      font-size: 1rem; font-weight: 600; font-family: inherit; color: #fff;
+      background: linear-gradient(135deg, var(--terra), #b3673f);
+      box-shadow: 0 8px 20px rgba(200,121,78,0.3); margin: 4px;
+    }
+    button.alt { background: #444; box-shadow: none; }
+    button:active { transform: scale(0.97); }
+    #qrcode { margin: 22px auto 8px; display: inline-block; padding: 16px; background: #fff; border-radius: 12px; }
+    #qrcode img, #qrcode canvas { display: block; }
+    .note { font-size: .78rem; color: #888; margin-top: 14px; line-height: 1.5; }
+    .err { color: #c0392b; font-size: .85rem; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1 class="brand">Φί<span class="accent">Λ</span>ιΠs — QR Code</h1>
+    <p class="help">Βάλε το URL της σελίδας του μενού σου και πάτα «Δημιουργία».</p>
+
+    <label for="url">Διεύθυνση (URL) του μενού</label>
+    <input id="url" type="url" placeholder="https://to-domain-mou.gr/" />
+
+    <div>
+      <button id="gen">Δημιουργία QR</button>
+      <button id="dl" class="alt">Κατέβασμα PNG</button>
+    </div>
+
+    <div class="err" id="err"></div>
+    <div id="qrcode"></div>
+
+    <p class="note">
+      Σκάναρε το QR με την κάμερα ενός κινητού για να ελέγξεις ότι ανοίγει σωστά
+      το μενού. Μετά κατέβασε το PNG και τύπωσέ το για το τραπέζι.
+    </p>
+  </div>
+
+  <!-- Βιβλιοθήκη QR μέσω CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    var qrEl = document.getElementById("qrcode");
+    var errEl = document.getElementById("err");
+    var urlInput = document.getElementById("url");
+    var qr = null;
+
+    // Προσυμπλήρωση: αν ανοίξεις το qr.html από τον ίδιο server,
+    // προτείνει αυτόματα το URL του index.html.
+    try {
+      var base = location.href.replace(/qr\.html.*$/, "");
+      urlInput.value = base || "";
+    } catch (e) {}
+
+    function generate() {
+      var url = urlInput.value.trim();
+      errEl.textContent = "";
+      qrEl.innerHTML = "";
+      if (!url) { errEl.textContent = "Γράψε πρώτα ένα URL."; return; }
+      if (typeof QRCode === "undefined") {
+        errEl.textContent = "Δεν φόρτωσε η βιβλιοθήκη QR (έλεγξε το internet).";
+        return;
+      }
+      qr = new QRCode(qrEl, {
+        text: url,
+        width: 280,
+        height: 280,
+        colorDark: "#1c1c1c",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function download() {
+      var canvas = qrEl.querySelector("canvas");
+      var img = qrEl.querySelector("img");
+      var dataURL = canvas ? canvas.toDataURL("image/png")
+                   : (img ? img.src : null);
+      if (!dataURL) { errEl.textContent = "Φτιάξε πρώτα το QR."; return; }
+      var a = document.createElement("a");
+      a.href = dataURL;
+      a.download = "filips-qr.png";
+      a.click();
+    }
+
+    document.getElementById("gen").addEventListener("click", generate);
+    document.getElementById("dl").addEventListener("click", download);
+
+    // Φτιάξε ένα αρχικό QR αν υπάρχει προσυμπληρωμένο URL.
+    if (urlInput.value) generate();
+  </script>
+</body>
+</html>

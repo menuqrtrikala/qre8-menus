@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0e0f13" media="(prefers-color-scheme: dark)" />
+  <meta name="description" content="Ψηφιακό μενού — ΦίΛιΠs γαστροθίορι, Est. 2023. Every Drink Shines." />
+  <title>ΦίΛιΠs — Μενού</title>
+
+  <!-- Google Fonts (με system-font fallback αν αποτύχει το CDN) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Permanent+Marker&family=Poppins:wght@300;400;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Ολογραφικό φόντο (φαίνεται στο μενού) -->
+  <div class="holo-bg" aria-hidden="true"></div>
+  <div class="zine-tag t1" aria-hidden="true">creativity takes courage ™</div>
+  <div class="zine-tag t2" aria-hidden="true">NEVER STOP</div>
+
+  <div class="app">
+
+    <!-- ===================== SPLASH ===================== -->
+    <section id="view-splash" class="view active">
+      <div class="logo-frame">
+        <div class="logo-word">
+          Φί<span class="dot terra"></span>Λι<span class="dot sage"></span>Π<span>s</span><span class="sq"></span>
+        </div>
+        <div class="logo-tagline">γαστροθίορι</div>
+        <div class="logo-est">EST. 2023</div>
+      </div>
+      <div class="splash-tagline">Every Drink Shines ✦</div>
+      <button id="btn-enter" class="btn-enter">Δες το μενού</button>
+    </section>
+
+    <!-- ===================== ΚΑΤΗΓΟΡΙΕΣ ===================== -->
+    <section id="view-categories" class="view">
+      <div class="topbar">
+        <button class="btn-back" style="visibility:hidden">←</button>
+        <span class="topbar-brand">Φί<span class="accent">Λ</span>ιΠs</span>
+        <div class="lang-toggle" role="group" aria-label="Γλώσσα">
+          <button data-lang="gr">GR</button>
+          <button data-lang="en">EN</button>
+        </div>
+      </div>
+
+      <div class="page-head">
+        <div class="doodle">✦ ◜◝ ✦</div>
+        <h1 id="cat-page-title">Κατηγορίες</h1>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"><!-- γεμίζει από app.js --></div>
+
+      <div class="footer">
+        <div class="slogan footer-slogan">Every Drink Shines</div>
+        <div class="footer-powered">Powered by Φίλιπς © 2025</div>
+        <div class="mark">creativity takes courage ™</div>
+      </div>
+    </section>
+
+    <!-- ===================== ΠΡΟΪΟΝΤΑ ===================== -->
+    <section id="view-products" class="view">
+      <div class="topbar">
+        <button class="btn-back">← Πίσω</button>
+        <span class="topbar-brand">Φί<span class="accent">Λ</span>ιΠs</span>
+        <div class="lang-toggle" role="group" aria-label="Γλώσσα">
+          <button data-lang="gr">GR</button>
+          <button data-lang="en">EN</button>
+        </div>
+      </div>
+
+      <div class="page-head">
+        <h1 id="prod-title">—</h1>
+        <div id="prod-sub" class="sub"></div>
+      </div>
+
+      <div id="items-wrap" class="items-wrap"><!-- γεμίζει από app.js --></div>
+
+      <div class="footer">
+        <div class="slogan footer-slogan">Spirits, Stories, Sensations</div>
+        <div class="footer-powered">Powered by Φίλιπς © 2025</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Δεδομένα ΠΡΩΤΑ, μετά η λογική -->
+  <script src="menu-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
